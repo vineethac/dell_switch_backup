@@ -14,28 +14,62 @@
 
 #>
 
-#New SSH session to the Switch
-$securePassword = ConvertTo-SecureString 'Dell1234' -AsPlainText -Force
-$cred = New-Object System.Management.Automation.PSCredential ('admin', $securePassword)
+Begin {
+    $LibFolder = "$PSScriptRoot\Lib"
+    $LogFolder = "$PSScriptRoot\logs"
+    
+    try{
+        Import-Module $LibFolder\helpers\helpers.psm1 -Force  -ErrorAction Stop
+        Show-Message -Message "[Region] Prerequisite - helpers loaded."
+    }
+    catch {
+        Show-Message -Severity high -Message "[EndRegion] Failed - Prerequisite of loading modules"
+        Write-VerboseLog -ErrorInfo $PSItem
+        $PSCmdlet.ThrowTerminatingError($PSItem)
+    }
+    
+    #region generate the transcript log
+    #Modifying the VerbosePreference in the Function Scope
+    $Start = Get-Date
+    $VerbosePreference = 'Continue'
+    $TranscriptName = '{0}_{1}.log' -f $(($MyInvocation.MyCommand.Name.split('.'))[0]),$(Get-Date -Format ddMMyyyyhhmmss)
+    Start-Transcript -Path "$LogFolder\$TranscriptName"
+    #endregion generate the transcript log
 
-$list = Get-Content .\switch_list.txt
-
-For ($i = 0; $i -lt $list.count; $i++){
-
-$sw_ip = $list[$i]
-if ($sw_ip) {
-
-Write-Host "Creating new SSH session to $sw_ip"
-$SWssh = New-SSHSession -ComputerName $list[$i] -Credential $cred -Force -ConnectionTimeout 300
-Write-Host "Connected to Switch. This will take few seconds."
-Start-Sleep -s 3
-
-$filename =(Get-Date).tostring("dd-MM-yyyy-hh-mm-ss")
-
-$cmd_backup = "copy running-config tftp://100.98.22.33/$sw_ip/$filename.txt"
-write-host $cmd_backup
-$config_backup = invoke-sshcommand -Command $cmd_backup -SSHSession $SWssh
-Write-Host "Running config copied to tftp://100.98.22.33/$sw_ip"
-Start-Sleep -s 3
+    #region log the current Script version in use
+    Write-VerboseLog -Message "[Region] log the current script version in use"
+    $ParseError = $null
+    $Tokens = $null
+    $null = [System.Management.Automation.Language.Parser]::ParseInput($($MyInvocation.MyCommand.ScriptContents),[ref]$Tokens,[ref]$ParseError)
+    $VersionComment = $Tokens | Where-Object -filterScript { ($PSitem.Kind -eq "Comment") -and ($PSitem.Text -like '*version*')}
+    # Put the version in the verbose messages for the log to cpature it.
+    Write-VerboseLog -Message "Script -> $($MyInvocation.MyCommand.Name) ; Version -> $(($VersionComment -split ':')[1])"
+    # Remove the variables used above
+    Remove-Variable	-Name ParseError,Tokens,VersionComment
+    Write-VerboseLog -Verbose -Message "[EndRegion] log the current script version in use"
+    #endregion log the current script version in use
 }
+
+Process {
+	#New SSH session to the Switch
+	$securePassword = ConvertTo-SecureString 'Dell1234' -AsPlainText -Force
+	$cred = New-Object System.Management.Automation.PSCredential ('admin', $securePassword)
+
+	$list = Get-Content .\switch_list.txt
+	For ($i = 0; $i -lt $list.count; $i++){
+		$sw_ip = $list[$i]
+		if ($sw_ip) {
+			Write-Host "Creating new SSH session to $sw_ip"
+			$SWssh = New-SSHSession -ComputerName $list[$i] -Credential $cred -Force -ConnectionTimeout 300
+			Write-Host "Connected to Switch. This will take few seconds."
+			Start-Sleep -s 3
+
+			$filename =(Get-Date).tostring("dd-MM-yyyy-hh-mm-ss")
+			$cmd_backup = "copy running-config tftp://100.98.22.33/$sw_ip/$filename.txt"
+			write-host $cmd_backup
+			$config_backup = invoke-sshcommand -Command $cmd_backup -SSHSession $SWssh
+			Write-Host "Running config copied to tftp://100.98.22.33/$sw_ip"
+			Start-Sleep -s 3
+		}
+	}
 }
