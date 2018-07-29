@@ -13,7 +13,7 @@ PS>.\invoke_switch_config_backup.ps1
 #>
 
 Begin {
-    $LibFolder = "$PSScriptRoot\Lib"
+	$LibFolder = "$PSScriptRoot\Lib"
     $LogFolder = "$PSScriptRoot\logs"
     
     try{
@@ -25,34 +25,34 @@ Begin {
         Write-VerboseLog -ErrorInfo $PSItem
         $PSCmdlet.ThrowTerminatingError($PSItem)
     }
-    
-    #region generate the transcript log
-    #Modifying the VerbosePreference in the Function Scope
-    $Start = Get-Date
-    $VerbosePreference = 'Continue'
-    $TranscriptName = '{0}_{1}.log' -f $(($MyInvocation.MyCommand.Name.split('.'))[0]),$(Get-Date -Format ddMMyyyyhhmmss)
-    Start-Transcript -Path "$LogFolder\$TranscriptName"
-    #endregion generate the transcript log
+	
+	#region generate the transcript log
+	#Modifying the VerbosePreference in the Function Scope
+	$Start = Get-Date
+	$VerbosePreference = 'Continue'
+	$TranscriptName = '{0}_{1}.log' -f $(($MyInvocation.MyCommand.Name.split('.'))[0]),$(Get-Date -Format ddMMyyyyhhmmss)
+	Start-Transcript -Path "$LogFolder\$TranscriptName"
+	#endregion generate the transcript log
 
-    #region log the current Script version in use
-    Write-VerboseLog -Message "[Region] log the current script version in use"
-    $ParseError = $null
-    $Tokens = $null
-    $null = [System.Management.Automation.Language.Parser]::ParseInput($($MyInvocation.MyCommand.ScriptContents),[ref]$Tokens,[ref]$ParseError)
-    $VersionComment = $Tokens | Where-Object -filterScript { ($PSitem.Kind -eq "Comment") -and ($PSitem.Text -like '*version*')}
-    # Put the version in the verbose messages for the log to cpature it.
-    Write-VerboseLog -Message "Script -> $($MyInvocation.MyCommand.Name) ; Version -> $(($VersionComment -split ':')[1])"
-    # Remove the variables used above
-    Remove-Variable	-Name ParseError,Tokens,VersionComment
-    Write-VerboseLog -Verbose -Message "[EndRegion] log the current script version in use"
-	#endregion log the current script version in use
-	
-	#Collecting creds to SSH
-	$securePassword = Get-Content $LibFolder\key\keyfile.txt | ConvertTo-SecureString
-	$cred = New-Object System.Management.Automation.PSCredential ('admin', $securePassword)
-	
-	#Collecting IP address of switches from the list
-	$list = Get-Content .\switch_list.txt
+	#region log the current Script version in use
+	Write-VerboseLog -Message "[Region] log the current script version in use"
+	$ParseError = $null
+				$Tokens = $null
+				$null = [System.Management.Automation.Language.Parser]::ParseInput($($MyInvocation.MyCommand.ScriptContents),[ref]$Tokens,[ref]$ParseError)
+				$VersionComment = $Tokens | Where-Object -filterScript { ($PSitem.Kind -eq "Comment") -and ($PSitem.Text -like '*version*')}
+				# Put the version in the verbose messages for the log to cpature it.
+				Write-VerboseLog -Message "Script -> $($MyInvocation.MyCommand.Name) ; Version -> $(($VersionComment -split ':')[1])"
+				# Remove the variables used above
+				Remove-Variable	-Name ParseError,Tokens,VersionComment
+				Write-VerboseLog -Verbose -Message "[EndRegion] log the current script version in use"
+				#endregion log the current script version in use
+				
+				#Collecting creds to SSH
+				$securePassword = Get-Content $LibFolder\key\keyfile.txt | ConvertTo-SecureString
+				$cred = New-Object System.Management.Automation.PSCredential ('admin', $securePassword)
+				
+				#Collecting IP address of switches from the list
+				$list = Get-Content .\switch_list.txt
 }
 
 Process {
