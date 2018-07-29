@@ -5,13 +5,12 @@
 # Version      : 0.1
 # Last Modified: 28/07/2018 (ddMMyyyy)
 ###########################################################################
-<#  
-        .SYNOPSIS
-	    This script invokes Dell switch configuration using SSH
+<#
+		.SYNOPSIS
+		This script invokes Dell switch configuration using SSH
 
     	.EXAMPLE
     	PS>.\invoke_switch_config_backup.ps1
-
 #>
 
 Begin {
@@ -48,14 +47,14 @@ Begin {
     Remove-Variable	-Name ParseError,Tokens,VersionComment
     Write-VerboseLog -Verbose -Message "[EndRegion] log the current script version in use"
     #endregion log the current script version in use
+
+	#SSH creds
+	$securePassword = Get-Content $LibFolder\key\keyfile.txt | ConvertTo-SecureString
+	$cred = New-Object System.Management.Automation.PSCredential ('admin', $securePassword)
+	$list = Get-Content .\switch_list.txt
 }
 
 Process {
-	#New SSH session to the Switch
-	$securePassword = ConvertTo-SecureString 'Dell1234' -AsPlainText -Force
-	$cred = New-Object System.Management.Automation.PSCredential ('admin', $securePassword)
-
-	$list = Get-Content .\switch_list.txt
 	For ($i = 0; $i -lt $list.count; $i++){
 		$sw_ip = $list[$i]
 		if ($sw_ip) {
