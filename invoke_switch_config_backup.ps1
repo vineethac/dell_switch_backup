@@ -77,16 +77,33 @@ Process {
 	For ($i = 0; $i -lt $list.count; $i++){
 		$sw_ip = $list[$i]
 		if ($sw_ip) {
-			Show-Message -Message "Creating new SSH session to $sw_ip"
-			$SWssh = New-SSHSession -ComputerName $list[$i] -Credential $cred -Force -ConnectionTimeout 300
-			Show-Message -Message "Connected to Switch. This will take few seconds."
+			try {
+				Show-Message -Message "Creating new SSH session to $sw_ip"
+				$SWssh = New-SSHSession -ComputerName $list[$i] -Credential $cred -Force -ConnectionTimeout 300
+				Show-Message -Message "Connected to Switch. This will take few seconds."
+			}
+			catch {
+				Show-Message -Severity high -Message "Unable to SSH to switch $sw_ip Quiting!"
+        		Write-VerboseLog -ErrorInfo $PSItem
+        		Stop-Transcript
+        		$PSCmdlet.ThrowTerminatingError($PSItem)
+			}
+			
 			Start-Sleep -s 3
 
 			$filename =(Get-Date).tostring("dd-MM-yyyy-hh-mm-ss")
 			$cmd_backup = "copy running-config tftp://100.98.22.33/$sw_ip/$filename.txt"
 			Show-Message -Message $cmd_backup
-			$config_backup = invoke-sshcommand -Command $cmd_backup -SSHSession $SWssh
-			Show-Message -Message "Running config copied to tftp://100.98.22.33/$sw_ip"
+			try {
+				$config_backup = invoke-sshcommand -Command $cmd_backup -SSHSession $SWssh
+				Show-Message -Message "Running config copied to tftp://100.98.22.33/$sw_ip"	
+			}
+			catch {
+				Show-Message -Severity high -Message "Failed to save running config to TFTP location!"
+        		Write-VerboseLog -ErrorInfo $PSItem
+        		Stop-Transcript
+        		$PSCmdlet.ThrowTerminatingError($PSItem)
+			}
 			Start-Sleep -s 3
 		}
 	}
