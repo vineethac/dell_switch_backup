@@ -15,12 +15,12 @@ PS>.\invoke_switch_config_backup.ps1
 Begin {
 	$LibFolder = "$PSScriptRoot\Lib"
 	$LogFolder = "$PSScriptRoot\logs"
-    
-    try {
+	
+	try {
 		Import-Module $LibFolder\helpers\helpers.psm1 -Force  -ErrorAction Stop
 		Show-Message -Message "[Region] Prerequisite - helpers loaded."
-    }
-    catch {
+	}
+	catch {
 		Show-Message -Severity high -Message "[EndRegion] Failed - Prerequisite of loading modules"
 		Write-VerboseLog -ErrorInfo $PSItem
 		$PSCmdlet.ThrowTerminatingError($PSItem)
