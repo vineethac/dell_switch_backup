@@ -48,27 +48,45 @@ Begin {
 	#endregion log the current script version in use
 				
 	#Collecting creds to SSH
-	$securePassword = Get-Content $LibFolder\key\keyfile.txt | ConvertTo-SecureString
+	try {
+		Show-Message -Message "Collecting secure password"
+		$securePassword = Get-Content $LibFolder\key\keyfile.txt | ConvertTo-SecureString
+	}
+	catch {
+		Show-Message -Severity high -Message "Failed to collect encrypted password. Exiting!"
+		Write-Verbose -ErrorInfo $PSItem
+		Stop-Transcript
+		$PSCmdlet.ThrowTerminatingError($PSItem)
+	}
 	$cred = New-Object System.Management.Automation.PSCredential ('admin', $securePassword)
 				
 	#Collecting IP address of switches from the list
-	$list = Get-Content .\switch_list.txt
+	try {
+		Show-Message -Message "Collecting IP address of Dell switches from switch list"
+		$list = Get-Content .\switch_list.txt
+	}
+	catch {
+		Show-Message -Severity high -Message "Failed to collect IP info from the list"
+		Write-Verbose -ErrorInfo $PSItem
+		Stop-Transcript
+		$PSCmdlet.ThrowTerminatingError($PSItem)
+	}
 }
 
 Process {
 	For ($i = 0; $i -lt $list.count; $i++){
 		$sw_ip = $list[$i]
 		if ($sw_ip) {
-			Show-Message "Creating new SSH session to $sw_ip"
+			Show-Message -Message "Creating new SSH session to $sw_ip"
 			$SWssh = New-SSHSession -ComputerName $list[$i] -Credential $cred -Force -ConnectionTimeout 300
-			Show-Message "Connected to Switch. This will take few seconds."
+			Show-Message -Message "Connected to Switch. This will take few seconds."
 			Start-Sleep -s 3
 
 			$filename =(Get-Date).tostring("dd-MM-yyyy-hh-mm-ss")
 			$cmd_backup = "copy running-config tftp://100.98.22.33/$sw_ip/$filename.txt"
-			Show-Message $cmd_backup
+			Show-Message -Message $cmd_backup
 			$config_backup = invoke-sshcommand -Command $cmd_backup -SSHSession $SWssh
-			Show-Message "Running config copied to tftp://100.98.22.33/$sw_ip"
+			Show-Message -Message "Running config copied to tftp://100.98.22.33/$sw_ip"
 			Start-Sleep -s 3
 		}
 	}
