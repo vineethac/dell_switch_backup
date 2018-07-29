@@ -23,7 +23,7 @@ Begin {
     catch {
 		Show-Message -Severity high -Message "[EndRegion] Failed - Prerequisite of loading modules"
 		Write-VerboseLog -ErrorInfo $PSItem
-		$PSCmdlet.ThrowTerminatingError($PSItem
+		$PSCmdlet.ThrowTerminatingError($PSItem)
 	}
 	
 #region generate the transcript log
