@@ -6,11 +6,11 @@
 # Last Modified: 28/07/2018 (ddMMyyyy)
 ###########################################################################
 <#
-		.SYNOPSIS
-		This script invokes Dell switch configuration using SSH
+.SYNOPSIS
+This script invokes Dell switch configuration using SSH
 
-    	.EXAMPLE
-    	PS>.\invoke_switch_config_backup.ps1
+.EXAMPLE
+PS>.\invoke_switch_config_backup.ps1
 #>
 
 Begin {
