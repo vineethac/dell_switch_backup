@@ -83,9 +83,8 @@ Process {
 				Show-Message -Message "Connected to Switch. This will take few seconds."
 			}
 			catch {
-				Show-Message -Severity high -Message "Unable to SSH to switch $sw_ip Quiting!"
+				Show-Message -Severity high -Message "Unable to SSH to switch $sw_ip !"
 				Write-VerboseLog -ErrorInfo $PSItem
-				Stop-Transcript
 				$PSCmdlet.ThrowTerminatingError($PSItem)
 			}
 			
@@ -101,7 +100,6 @@ Process {
 			catch {
 				Show-Message -Severity high -Message "Failed to save running config to TFTP location!"
 				Write-VerboseLog -ErrorInfo $PSItem
-				Stop-Transcript
 				$PSCmdlet.ThrowTerminatingError($PSItem)
 			}
 			Start-Sleep -s 3
