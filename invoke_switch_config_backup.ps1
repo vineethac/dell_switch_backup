@@ -52,7 +52,7 @@ Begin {
 	$cred = New-Object System.Management.Automation.PSCredential ('admin', $securePassword)
 				
 	#Collecting IP address of switches from the list
-	list = Get-Content .\switch_list.txt
+	$list = Get-Content .\switch_list.txt
 }
 
 Process {
