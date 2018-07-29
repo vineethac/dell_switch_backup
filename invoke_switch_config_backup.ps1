@@ -23,16 +23,16 @@ Begin {
     catch {
 		Show-Message -Severity high -Message "[EndRegion] Failed - Prerequisite of loading modules"
 		Write-VerboseLog -ErrorInfo $PSItem
-		$PSCmdlet.ThrowTerminatingError($PSItem)
+		$PSCmdlet.ThrowTerminatingError($PSItem
 	}
 	
-	#region generate the transcript log
-	#Modifying the VerbosePreference in the Function Scope
-	$Start = Get-Date
-	$VerbosePreference = 'Continue'
-	$TranscriptName = '{0}_{1}.log' -f $(($MyInvocation.MyCommand.Name.split('.'))[0]),$(Get-Date -Format ddMMyyyyhhmmss)
-	Start-Transcript -Path "$LogFolder\$TranscriptName"
-	#endregion generate the transcript log
+#region generate the transcript log
+#Modifying the VerbosePreference in the Function Scope
+$Start = Get-Date
+$VerbosePreference = 'Continue'
+$TranscriptName = '{0}_{1}.log' -f $(($MyInvocation.MyCommand.Name.split('.'))[0]),$(Get-Date -Format ddMMyyyyhhmmss)
+Start-Transcript -Path "$LogFolder\$TranscriptName"
+#endregion generate the transcript log
 
 	#region log the current Script version in use
 	Write-VerboseLog -Message "[Region] log the current script version in use"
