@@ -8,7 +8,6 @@
 <#
 .SYNOPSIS
 This script invokes Dell switch configuration using SSH
-
 .EXAMPLE
 PS>.\invoke_switch_config_backup.ps1
 #>
@@ -46,11 +45,13 @@ Begin {
     # Remove the variables used above
     Remove-Variable	-Name ParseError,Tokens,VersionComment
     Write-VerboseLog -Verbose -Message "[EndRegion] log the current script version in use"
-    #endregion log the current script version in use
-
-	#SSH creds
+	#endregion log the current script version in use
+	
+	#Collecting creds to SSH
 	$securePassword = Get-Content $LibFolder\key\keyfile.txt | ConvertTo-SecureString
 	$cred = New-Object System.Management.Automation.PSCredential ('admin', $securePassword)
+	
+	#Collecting IP address of switches from the list
 	$list = Get-Content .\switch_list.txt
 }
 
