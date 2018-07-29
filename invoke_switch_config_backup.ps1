@@ -84,9 +84,9 @@ Process {
 			}
 			catch {
 				Show-Message -Severity high -Message "Unable to SSH to switch $sw_ip Quiting!"
-        		Write-VerboseLog -ErrorInfo $PSItem
-        		Stop-Transcript
-        		$PSCmdlet.ThrowTerminatingError($PSItem)
+				Write-VerboseLog -ErrorInfo $PSItem
+				Stop-Transcript
+				$PSCmdlet.ThrowTerminatingError($PSItem)
 			}
 			
 			Start-Sleep -s 3
