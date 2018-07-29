@@ -100,9 +100,9 @@ Process {
 			}
 			catch {
 				Show-Message -Severity high -Message "Failed to save running config to TFTP location!"
-        		Write-VerboseLog -ErrorInfo $PSItem
-        		Stop-Transcript
-        		$PSCmdlet.ThrowTerminatingError($PSItem)
+				Write-VerboseLog -ErrorInfo $PSItem
+				Stop-Transcript
+				$PSCmdlet.ThrowTerminatingError($PSItem)
 			}
 			Start-Sleep -s 3
 		}
