@@ -16,3 +16,6 @@ Once the project is cloned to your local machine, follow the steps below.
 5. Once the above steps are complete, PS > .\invoke_switch_config_backup.ps1
 # Use case
 You can schedule this PS script using a task scheduler, so that the running configuration of switches can be backed up automatically on a daily basis or as per requirements. 
+# References
+Encrypting creds with PowerShell: https://www.pdq.com/blog/secure-password-with-powershell-encrypting-credentials-part-1/
+Setting up a TFTP server: http://www.tricksguide.com/how-to-setup-a-tftp-server-tftpd32-windows.html
