@@ -4,9 +4,10 @@ Note: I tested it on Dell EMC S4048-ON switches.
 # Prerequisites
 1. TFTP server should be configured and running.
 2. SSH should be enabled on the switch.
-3. All the switches should have same user name and password.
-4. Password should be encrypted and written to a text file called "keyfile.txt" under "/lib/key" location.
-5. After logging in, the switch should be in "Enable" mode.
+3. PowerShell module Posh-SSH should be installed on the node from which the script is running.
+4. All the switches should have same user name and password.
+5. Password should be encrypted and written to a text file called "keyfile.txt" under "/lib/key" location.
+6. After logging in, the switch should be in "Enable" mode.
 # How to use?
 Once the project is cloned to your local machine, follow the steps below.
 1. Edit "switch_list.txt" and provide IP of the switches that you want to backup.
